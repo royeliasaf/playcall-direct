@@ -102,6 +102,43 @@ function sortPlays(arr) {
   });
 }
 
+// Sequential parser for no-time sheets (TYPE | Quarter | CALL format)
+function parseSequential(rows) {
+  const plays = [];
+  let curQ = null;
+  let seqSecs = 720; // start at 12:00, count down for display only
+
+  for (const row of rows) {
+    if (!row) continue;
+    // Try to find a quarter marker anywhere in the row
+    for (const cell of row) {
+      const q = sniffQuarter(cell);
+      if (q) { curQ = q; seqSecs = 720; break; }
+    }
+
+    // Last non-null cell is the CALL, first cell is TYPE
+    const cells = row.map(c => (c == null ? '' : String(c).trim()));
+    const callCell = [...cells].reverse().find(c => c !== '');
+    const typeCell = cells[0];
+
+    if (!callCell || !curQ) continue;
+
+    // Skip header rows
+    const up = callCell.toUpperCase();
+    if (up === 'CALL' || up === 'TYPE' || up === 'DATE:' || up.includes('SCOUTED TEAM')) continue;
+    if (sniffQuarter(callCell)) continue;
+
+    const split = splitCall(callCell);
+    const explicitType = typeCell ? typeCell.toUpperCase() : '';
+    const type = split.type || (['ATO','SOB','BOB','DEF','COB'].includes(explicitType) ? explicitType : '');
+    if (type === 'DEF') continue;
+
+    plays.push({ quarter: curQ, seconds: seqSecs, callRaw: callCell, type, callClean: split.clean });
+    seqSecs = Math.max(0, seqSecs - 30);
+  }
+  return plays;
+}
+
 export function parseWorkbook(wb) {
   const allPlays = [];
   for (const sheetName of wb.SheetNames) {
@@ -123,6 +160,12 @@ export function parseWorkbook(wb) {
       timeColScores.push({ col: c, score: total > 0 ? timeHits / total : 0, total, timeHits });
     }
     const timeCols = timeColScores.filter(s => s.timeHits >= 5 && s.score >= 0.4).map(s => s.col);
+
+    // No time columns found — fall back to sequential quarter-section parsing
+    if (timeCols.length === 0) {
+      allPlays.push(...parseSequential(rows));
+      continue;
+    }
 
     for (const tCol of timeCols) {
       const callCol = findCallColumn(rows, tCol, maxCols);
