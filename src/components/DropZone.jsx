@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-export default function DropZone({ label, accept, onFile, onFolder, status, loaded, meta, error }) {
+export default function DropZone({ label, accept, onFile, onFolder, status, loaded, error }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
 
@@ -9,29 +9,35 @@ export default function DropZone({ label, accept, onFile, onFolder, status, load
     setDragging(false);
     const items = e.dataTransfer.items;
     const files = e.dataTransfer.files;
-    if (onFolder && items && items.length > 0 && items[0].webkitGetAsEntry) {
+    if (onFolder && items?.length > 0 && items[0].webkitGetAsEntry) {
       const entry = items[0].webkitGetAsEntry();
-      if (entry && entry.isDirectory) { onFolder(entry); return; }
+      if (entry?.isDirectory) { onFolder(entry); return; }
     }
     if (files[0]) onFile(files[0]);
   };
 
-  const baseClass = `drop-zone${dragging ? ' dragging' : ''}${loaded ? ' loaded' : ''}`;
+  const cls = ['drop-zone', dragging && 'dragging', loaded && 'loaded'].filter(Boolean).join(' ');
 
   return (
     <div>
       <label
-        className={baseClass}
+        className={cls}
         onDragOver={e => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !loaded && inputRef.current?.click()}
+        style={loaded ? { cursor: 'default' } : {}}
       >
-        {loaded ? (
+        {status === 'loading' ? (
+          <div className="drop-loading">
+            <span className="spinner" />
+            Reading file…
+          </div>
+        ) : loaded ? (
           <>
-            <span className="drop-icon">✓</span>
-            <span className="drop-loaded-name">{loaded}</span>
-            {meta && <span className="drop-meta">{meta}</span>}
+            <span style={{ fontSize: 20 }}>✓</span>
+            <span className="drop-loaded-name">{loaded.name}</span>
+            {loaded.meta && <span className="drop-meta">{loaded.meta}</span>}
           </>
         ) : (
           <span>{label}</span>
@@ -44,8 +50,7 @@ export default function DropZone({ label, accept, onFile, onFolder, status, load
           onChange={e => { if (e.target.files[0]) onFile(e.target.files[0]); }}
         />
       </label>
-      {status && <div className="drop-status">{status}</div>}
-      {error && <div className="banner banner-error">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
     </div>
   );
 }
