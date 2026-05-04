@@ -107,7 +107,7 @@ export default function App() {
               <span className="logo-text">PlayCall Direct</span>
               <span className="logo-version">v1.0</span>
             </div>
-            <p className="header-tagline">Label play calls on Sportscode timelines — no Save to Source needed.</p>
+            <p className="header-tagline">Drop two files. Get a full labeled game pack. No extra steps.</p>
           </div>
         </div>
       </header>
@@ -236,28 +236,6 @@ export default function App() {
           />
         </section>
 
-        {/* ── Review ── */}
-        {assignments.length > 0 && (
-          <section className="card">
-            <div className="card-header">
-              <div className="step-badge step-badge-review">Review</div>
-              <h2>Match review</h2>
-            </div>
-            <p className="card-desc">
-              Each offense clip is matched to one Excel play in order. Free throws are auto-detected and skipped. Edit any play call inline — changes write directly into the timeline.
-            </p>
-            <StatsBar assignments={assignments} plays={plays} />
-            <div className="notice-good">
-              ✓ <strong>{assignments.filter(a => a.kind === 'ft').length} FT clips</strong> auto-labeled &nbsp;·&nbsp;
-              <strong>{assignments.filter(a => a.kind === 'play').length} plays</strong> matched
-              {assignments.filter(a => a.kind === 'leftover').length > 0 &&
-                <> &nbsp;·&nbsp; <span className="notice-warn">{assignments.filter(a => a.kind === 'leftover').length} clips unmatched</span></>
-              }
-            </div>
-            <ReviewTable assignments={assignments} onCallChange={onCallChange} />
-          </section>
-        )}
-
         {/* ── Build ── */}
         <section className="card card-build">
           <div className="card-header">
@@ -296,10 +274,35 @@ export default function App() {
           {genState.status === 'error' && <div className="banner banner-error">⚠ Build failed: {genState.error}</div>}
         </section>
 
+        {/* ── Review ── */}
+        {assignments.length > 0 && (
+          <section className="card">
+            <div className="card-header">
+              <div className="step-badge step-badge-review">Review</div>
+              <h2>Match review</h2>
+            </div>
+            <p className="card-desc">
+              Each offense clip is matched to one Excel play in order. Free throws are auto-detected and skipped. Edit any play call inline — changes write directly into the timeline.
+            </p>
+            <StatsBar assignments={assignments} plays={plays} />
+            <div className="notice-good">
+              ✓ <strong>{assignments.filter(a => a.kind === 'ft').length} FT clips</strong> auto-labeled &nbsp;·&nbsp;
+              <strong>{assignments.filter(a => a.kind === 'play').length} plays</strong> matched
+              {assignments.filter(a => a.kind === 'leftover').length > 0 &&
+                <> &nbsp;·&nbsp; <span className="notice-warn">{assignments.filter(a => a.kind === 'leftover').length} clips unmatched</span></>
+              }
+            </div>
+            <ReviewTable assignments={assignments} onCallChange={onCallChange} />
+          </section>
+        )}
+
       </main>
 
       <footer className="footer">
-        <div className="container">PlayCall Direct · Internal tool · All processing happens in your browser — no files are uploaded to any server.</div>
+        <div className="container">
+          <span>PlayCall Direct · All processing happens in your browser — no files uploaded to any server.</span>
+          <span className="footer-credit">A Roy Eliasaf project</span>
+        </div>
       </footer>
     </div>
   );

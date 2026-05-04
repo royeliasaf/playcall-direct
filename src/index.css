@@ -674,7 +674,20 @@ tr.q-divider td {
   padding: 16px 0;
   font-size: 12px;
   color: var(--ink3);
-  text-align: center;
+}
+
+.footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-credit {
+  color: var(--ink3);
+  font-style: italic;
+  flex-shrink: 0;
 }
 
 /* ── Responsive ── */
