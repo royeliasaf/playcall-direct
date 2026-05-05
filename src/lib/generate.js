@@ -88,7 +88,7 @@ export async function generate(engine, onProgress) {
     } else {
       relInsideScVideo = inPath;
     }
-    const outPath = `${packFolderName}/${baseScVideoName}/${cleanPathSegments(relInsideScVideo)}`;
+    const outPath = `${packFolderName}/${baseScVideoName}.SCVideo/${cleanPathSegments(relInsideScVideo)}`;
 
     let blob;
     if (entry._file) blob = entry._file;
@@ -103,7 +103,7 @@ export async function generate(engine, onProgress) {
   const tlRel = timelinePath.startsWith(folderInZipName + '/')
     ? timelinePath.slice(folderInZipName.length + 1)
     : timelinePath;
-  const tlOutPath = `${packFolderName}/${baseScVideoName}/${cleanPathSegments(tlRel)}`;
+  const tlOutPath = `${packFolderName}/${baseScVideoName}.SCVideo/${cleanPathSegments(tlRel)}`;
   await writer.add(tlOutPath, new zip.TextReader(newTimelineText));
 
   onProgress(`Building OFFENSE sorter (${labeledOffRow.instances?.length || 0} clips)...`, 96);
