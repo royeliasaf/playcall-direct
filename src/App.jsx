@@ -103,7 +103,7 @@ export default function App() {
         <div className="container">
           <div className="header-top">
             <div className="logo">
-              <span className="logo-icon">▶</span>
+              <span className="logo-icon">PCD</span>
               <span className="logo-text">PlayCall Direct</span>
               <span className="logo-version">v1.0</span>
             </div>
@@ -147,41 +147,28 @@ export default function App() {
         <section className="output-section">
           <div className="output-label">What's inside the output</div>
           <div className="output-grid">
-            <div className="output-item">
-              <span className="output-icon">🎬</span>
-              <div>
-                <div className="output-item-title">Cleaned .SCVideo</div>
-                <div className="output-item-desc">Timeline with play call labels + Full Game row built in</div>
+            {[
+              { label: 'Cleaned .SCVideo',  desc: 'Labeled timeline + Full Game row' },
+              { label: 'Offense Sorter',    desc: 'All offensive clips, labeled' },
+              { label: 'Defense Sorter',    desc: 'All defensive clips' },
+              { label: 'Full Game Sorter',  desc: 'Both teams, chronological order' },
+              { label: "Coach's Excel",     desc: 'Original spreadsheet in the pack' },
+            ].map(item => (
+              <div className="output-item" key={item.label}>
+                <div className="output-item-icon">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="10" height="10" rx="1.5"/>
+                    <line x1="4.5" y1="5" x2="9.5" y2="5"/>
+                    <line x1="4.5" y1="7" x2="9.5" y2="7"/>
+                    <line x1="4.5" y1="9" x2="7.5" y2="9"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="output-item-title">{item.label}</div>
+                  <div className="output-item-desc">{item.desc}</div>
+                </div>
               </div>
-            </div>
-            <div className="output-item">
-              <span className="output-icon">⚔️</span>
-              <div>
-                <div className="output-item-title">Offense Sorter</div>
-                <div className="output-item-desc">SCPlaylist with all offensive clips, labeled</div>
-              </div>
-            </div>
-            <div className="output-item">
-              <span className="output-icon">🛡️</span>
-              <div>
-                <div className="output-item-title">Defense Sorter</div>
-                <div className="output-item-desc">SCPlaylist with all defensive clips</div>
-              </div>
-            </div>
-            <div className="output-item">
-              <span className="output-icon">🏀</span>
-              <div>
-                <div className="output-item-title">Full Game Sorter</div>
-                <div className="output-item-desc">Both teams merged in chronological order</div>
-              </div>
-            </div>
-            <div className="output-item">
-              <span className="output-icon">📊</span>
-              <div>
-                <div className="output-item-title">Coach's Excel</div>
-                <div className="output-item-desc">Original spreadsheet included in the pack</div>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
@@ -213,7 +200,7 @@ export default function App() {
           </div>
 
           <div className="warning-box">
-            <span className="warning-icon">⚠️</span>
+            <span className="warning-icon">!</span>
             <div>
               <strong>Every offensive play must have an entry.</strong> If there was no play call, write <code>NOTHING</code>. Blank rows will cause plays to match the wrong clips. One row per play, in chronological order.
             </div>
@@ -250,7 +237,7 @@ export default function App() {
             {genState.status === 'building' ? (
               <><span className="btn-spinner" />Building…</>
             ) : (
-              '⬇  Build Game Pack'
+              'Build Game Pack'
             )}
           </button>
 
@@ -300,7 +287,7 @@ export default function App() {
 
       <footer className="footer">
         <div className="container">
-          <span>PlayCall Direct · All processing happens in your browser — no files uploaded to any server.</span>
+          <span>PlayCall Direct — All processing runs locally in your browser. No files are uploaded.</span>
           <span className="footer-credit">A Roy Eliasaf project</span>
         </div>
       </footer>
