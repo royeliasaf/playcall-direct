@@ -494,6 +494,24 @@ th {
 td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--ink); }
 tr:last-child td { border-bottom: none; }
 tr.row-ft { background: rgba(245,158,11,0.04); }
+
+tr.row-phantom { background: rgba(200,16,46,0.05); }
+tr.row-phantom td:first-child { border-left: 2px solid var(--accent); }
+
+.pill-phantom { background: var(--accent); color: white; }
+
+.phantom-time { color: var(--blue); font-family: var(--mono); font-size: 12px; }
+
+.phantom-tag {
+  display: inline-block;
+  background: rgba(200,16,46,0.12);
+  border: 1px solid rgba(200,16,46,0.2);
+  color: #fca5a5;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
 tr:hover td { background: rgba(255,255,255,0.02); }
 
 tr.q-divider td {

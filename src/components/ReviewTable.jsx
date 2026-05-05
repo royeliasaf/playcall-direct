@@ -1,21 +1,48 @@
 import { fmtSeconds } from '../lib/utils.js';
 
 const TYPE_COLORS = {
-  ATO: '#d4523f',
-  SOB: '#2d5a8f',
-  BOB: '#5a8f3f',
-  FT: '#c97a1f',
-  EMPTY: '#c8102e',
+  ATO: '#e8304e',
+  SOB: '#3b82f6',
+  BOB: '#22c55e',
+  FT:  '#f59e0b',
 };
 
 function TypePill({ type }) {
   if (!type) return null;
-  const bg = TYPE_COLORS[type] || '#e0ddd6';
-  const color = TYPE_COLORS[type] ? '#fff' : '#555';
+  const bg = TYPE_COLORS[type] || '#374151';
   return (
-    <span className="pill" style={{ background: bg, color }}>
-      {type}
-    </span>
+    <span className="pill" style={{ background: bg, color: '#fff' }}>{type}</span>
+  );
+}
+
+function PhantomRow({ a, i }) {
+  const m = a.meta || {};
+  const tags = [
+    m.existingCall && `📋 ${m.existingCall}`,
+    m.situation   && `🏷 ${m.situation}`,
+    m.player      && m.player,
+  ].filter(Boolean);
+
+  return (
+    <tr className="row-phantom">
+      <td className="col-idx">{i + 1}</td>
+      <td className="col-time" style={{ fontFamily: 'var(--mono)', fontSize: 12 }}>
+        {m.videoTime && <span className="phantom-time">▶ {m.videoTime}</span>}
+      </td>
+      <td><span className="pill pill-phantom">MISSING</span></td>
+      <td className="col-detail">
+        {tags.length > 0
+          ? tags.map((t, ti) => <span key={ti} className="phantom-tag">{t}</span>)
+          : <span style={{ color: 'var(--ink3)', fontStyle: 'italic' }}>Clip #{m.instanceNum} · {m.dur}s · not in Excel</span>
+        }
+      </td>
+      <td className="col-raw" style={{ color: 'var(--yellow)', fontSize: 12 }}>
+        Clip #{m.instanceNum} · {m.dur}s · add to Excel
+      </td>
+      <td className="col-edit">
+        <span style={{ color: 'var(--ink3)', fontSize: 12, fontStyle: 'italic' }}>—</span>
+      </td>
+    </tr>
   );
 }
 
@@ -24,25 +51,26 @@ export default function ReviewTable({ assignments, onCallChange }) {
   const rows = [];
 
   assignments.forEach((a, i) => {
-    if (a.kind === 'leftover') return;
-
     if (a.quarter !== lastQ) {
       rows.push(
-        <tr key={`divider-${a.quarter}`} className="q-divider">
+        <tr key={`divider-${a.quarter}-${i}`} className="q-divider">
           <td colSpan={6}>— {a.quarter} —</td>
         </tr>
       );
       lastQ = a.quarter;
     }
 
-    const rowClass = a.kind === 'ft' ? 'row-ft' : '';
+    if (a.kind === 'leftover') {
+      rows.push(<PhantomRow key={a.uniqueId || i} a={a} i={i} />);
+      return;
+    }
 
     let typeCell = null;
     if (a.kind === 'ft') typeCell = <TypePill type="FT" />;
     else if (a.type) typeCell = <TypePill type={a.type} />;
 
     rows.push(
-      <tr key={a.uniqueId || i} className={rowClass}>
+      <tr key={a.uniqueId || i} className={a.kind === 'ft' ? 'row-ft' : ''}>
         <td className="col-idx">{i + 1}</td>
         <td className="col-time">{a.quarter} {fmtSeconds(a.seconds)}</td>
         <td>{typeCell}</td>
@@ -66,11 +94,11 @@ export default function ReviewTable({ assignments, onCallChange }) {
         <thead>
           <tr>
             <th style={{ width: 40 }}>#</th>
-            <th style={{ width: 80 }}>Game Clock</th>
-            <th style={{ width: 60 }}>Type</th>
-            <th>Clip</th>
-            <th>Coach's Raw Call</th>
-            <th style={{ width: '35%' }}>Will Write</th>
+            <th style={{ width: 90 }}>Time</th>
+            <th style={{ width: 80 }}>Type</th>
+            <th>Clip Info</th>
+            <th>Coach's Call</th>
+            <th style={{ width: '30%' }}>Will Write</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

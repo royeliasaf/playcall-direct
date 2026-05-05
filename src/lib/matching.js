@@ -17,6 +17,26 @@ export function instDetail(inst) {
   return player ? `${player} (${dur.toFixed(1)}s)` : `(${dur.toFixed(1)}s)`;
 }
 
+function fmtVideoTime(secs) {
+  if (secs == null) return '';
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = Math.floor(secs % 60);
+  return h > 0
+    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${m}:${String(s).padStart(2,'0')}`;
+}
+
+export function instMeta(inst, index) {
+  const labels = inst.labels || [];
+  const player = labels.find(l => (l.name || '').startsWith('#'))?.name || '';
+  const existingCall = labels.find(l => l.group === 'PLAY CALL')?.name || '';
+  const situation = labels.find(l => l.group === 'SITUATION' || l.group === 'Situation')?.name || '';
+  const dur = ((inst.endTime || 0) - (inst.startTime || 0)).toFixed(1);
+  const videoTime = fmtVideoTime(inst.startTime);
+  return { player, existingCall, situation, dur, videoTime, instanceNum: inst.instanceNum || index + 1 };
+}
+
 export function buildAssignments(offRow, plays) {
   const insts = (offRow.instances || []).slice()
     .sort((a, b) => (Number(a.startTime) || 0) - (Number(b.startTime) || 0));
@@ -49,7 +69,8 @@ export function buildAssignments(offRow, plays) {
           uniqueId: inst.uniqueId, kind: 'leftover',
           quarter: lastQ, seconds: lastSecs,
           type: '', callRaw: '', callClean: '',
-          detail: instDetail(inst)
+          detail: instDetail(inst),
+          meta: instMeta(inst, out.length),
         });
       }
     }
