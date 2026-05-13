@@ -98,16 +98,23 @@ export default function App() {
   return (
     <div className="app">
 
-      {/* ── Header ── */}
-      <header className="header">
-        <div className="container">
-          <div className="header-top">
-            <div className="logo">
-              <span className="logo-icon">PCD</span>
-              <span className="logo-text">PlayCall Direct</span>
-              <span className="logo-version">v1.0</span>
-            </div>
-            <p className="header-tagline">Drop two files. Get a full labeled game pack. No extra steps.</p>
+      {/* ── Hero ── */}
+      <header className="hero">
+        <div className="hero-field" aria-hidden />
+        <div className="container hero-inner">
+          <div className="hero-eyebrow">
+            <span className="hero-eyebrow-dot" />
+            Internal · Player Development
+          </div>
+          <h1 className="hero-title">
+            <span className="hero-title-mark">PCD</span>
+            <span className="hero-title-text">PlayCall Direct</span>
+          </h1>
+          <p className="hero-tagline">Drop two files. Get a full labeled game pack.</p>
+          <div className="hero-meta">
+            <span className="hero-chip">v1.0</span>
+            <span className="hero-chip-line" />
+            <span className="hero-chip-muted">SCVideo + Excel → SCVideo</span>
           </div>
         </div>
       </header>
